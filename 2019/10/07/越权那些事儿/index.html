@@ -13,7 +13,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
   <title>
     
-      测试 | Alita
+      越权那些事儿 | Alita
     
   </title>
   <meta name="author" content="耿">
@@ -164,7 +164,7 @@
 	<!-- Page title -->
 	<p>
 		
-			当前文章&nbsp;:&nbsp;《测试》
+			当前文章&nbsp;:&nbsp;《越权那些事儿》
 		
 	</p>
 
@@ -260,6 +260,18 @@
 		插件作者：KELEN
 		插件来源: https://github.com/KELEN/katelog
 -->
+
+	
+		<div class="layout-toc">
+			<div id="layout-toc">
+				<div class="k-catelog-list" id="catelog-list" data-title="文章目录"></div>
+			</div>
+		</div>
+
+		
+		<script src="/plugin/toc/katelog.min.js"></script>
+
+		
 	 
 
 <div class="layout-post">
@@ -267,8 +279,8 @@
 	<div class="article-title">
 		<i class="fa fa-paper-plane-o" aria-hidden="true"></i>
 		
-	<a href="/2019/10/05/test/" itemprop="url">
-		测试
+	<a href="/2019/10/07/越权那些事儿/" itemprop="url">
+		越权那些事儿
 	</a>
 
 	</div>
@@ -281,9 +293,9 @@
 
 	发布于
 
-	<a href="/2019/10/05/test/" itemprop="url">
-		<time datetime="2019-10-05T13:28:08.000Z" itemprop="datePublished">
-	  		2019-10-05
+	<a href="/2019/10/07/越权那些事儿/" itemprop="url">
+		<time datetime="2019-10-07T13:02:43.000Z" itemprop="datePublished">
+	  		2019-10-07
 	  </time>
 	</a>
 	&nbsp;
@@ -299,8 +311,8 @@
 
 	更新于
 
-	<a href="/2019/10/05/test/" itemprop="url">
-		<time datetime="2019-10-05T13:28:08.000Z" itemprop="dateUpdated">
+	<a href="/2019/10/07/越权那些事儿/" itemprop="url">
+		<time datetime="2019-10-07T13:02:43.000Z" itemprop="dateUpdated">
 	  		2019-10-07
 	  </time>
 	</a> 
@@ -312,12 +324,8 @@
 			<i class="fa fa-tags"></i>
 			
 	
-		<a href="/tags/文学/" class=" ">
-			文学
-		</a>
-	
-		<a href="/tags/测试/" class=" ">
-			测试
+		<a href="/tags/越权/" class=" ">
+			越权
 		</a>
 	
 		
@@ -330,7 +338,17 @@
 	</div>
 
 	<div class="article-content" id="article-content">
-		<p>Test</p>
+		<p>[TOC]</p>
+<h1 id="1-越权"><a href="#1-越权" class="headerlink" title="1 越权"></a>1 越权</h1><h2 id="1-1-漏洞简介"><a href="#1-1-漏洞简介" class="headerlink" title="1.1 漏洞简介"></a>1.1 漏洞简介</h2><p>何为越权漏洞，通俗的理解为用户可以操作超出自己管理权限范围的功能，从而进行非一般用户可以操作的行为。越权一般可以分为：<strong>垂直越权，平行越权，以及非授权访问。</strong>而在非用户登陆模式下，任意用户访问特定地址或链接均可以访问到需要用户身份后才可以访问到的功能。越权也可以看为安全配置不当导致的未授权访问。</p>
+<h2 id="1-2-漏洞原理"><a href="#1-2-漏洞原理" class="headerlink" title="1.2 漏洞原理"></a>1.2 漏洞原理</h2><p>未授权访问是系统对用户限制不全，或者无限制，可以让任意用户或者限制访问用户，可以访问到内部敏感信息，导致的信息泄露，以及系统功能的执行。越权漏洞的产生原因是未对访问功能做权限的效对，或者限制不全，导致对用户的限制只局限于某一个功能和操作上。</p>
+<h2 id="1-3-漏洞危害"><a href="#1-3-漏洞危害" class="headerlink" title="1.3 漏洞危害"></a>1.3 漏洞危害</h2><ul>
+<li><p>未授权访问通常是会泄露用户信息，系统信息。某些服务和系统中，未授权访问还可以执行系统命令，操作系统文件，导致系统的整体安全遭到破坏。</p>
+</li>
+<li><p>越权可以分为<strong>水平越权</strong>和<strong>垂直越权</strong>。垂直越权漏洞会导致低权限用户用来执行高权限用户的功能，获取高权限用户的账号信息，执行高权限用户的操作功能。水平越权会导致同一层级间的用户可以互相访问到对方的敏感信息，如保存的地址、手机号、订单记录。同时还可能会以其他平级权限用户的身份来执行某行功能，如购买，删除，添加，修改等。</p>
+</li>
+</ul>
+<h1 id="2-未授权访问漏洞总结"><a href="#2-未授权访问漏洞总结" class="headerlink" title="2 未授权访问漏洞总结"></a>2 未授权访问漏洞总结</h1><h3 id="0x01-概述"><a href="#0x01-概述" class="headerlink" title="0x01 概述"></a>0x01 概述</h3><p><font color="#ff0000">未授权访问可以理解为需要安全配置或权限认证的地址、授权页面存在缺陷，导致其他用户可以直接访问，从而引发重要权限可被操作、数据库、网站目录等敏感信息泄露。</font></p>
+<p>目前主要存在未授权访问漏洞的有：NFS服务，Samba服务，LDAP，Rsync，FTP，GitLab，Jenkins，MongoDB，Redis，ZooKeeper，ElasticSearch，Memcache，CouchDB，Docker，Solr，Hadoop，Dubbo等</p>
 	
 	</div>
 	
@@ -349,10 +367,10 @@
 	<span>
 		<a href="javascript: window.scrollTo(0, 0);">返回顶部</a>
 		
-			<a href="/2019/10/07/越权那些事儿/" title="越权那些事儿" rel="prev">
-				&laquo;上一篇
-			</a>
 		
+			<a href="/2019/10/05/test/" title="测试" rel="next">
+				下一篇&raquo;
+			</a>
 			
 	</span>
 
@@ -371,23 +389,23 @@
 			
 					<li>
 						<div class="relate-post-text">
-							<a class="relate-post-title" href="/2019/10/07/越权那些事儿/" title="越权那些事儿">
-								越权那些事儿			
+							<a class="relate-post-title" href="/2019/10/05/test/" title="测试">
+								测试			
 							</a>
 							<p class="relate-post-date">
 								<i class="fa fa-calendar"></i>
-								十月 7日, 2019				
+								十月 5日, 2019				
 							</p>
 							<p class="relate-post-content">
-								[TOC]
-1 越权1.1 漏洞简介何为越权漏洞，通俗的理解为用户可以操作超出自己管理权限范围的功能，从而进行非一般用户可以操作的行为。越权一般可以分为：垂直越权，平行越权，以及非授权访问。而在非用户登陆模式下，任意用户访问特定地址或...
+								Test
+
 							</p>
 						</div>
 
 						<div class="relate-post-cover">
-							<a href="/2019/10/07/越权那些事儿/" title="越权那些事儿">				
+							<a href="/2019/10/05/test/" title="测试">				
 								
-								<img class="lazy" src="/img/placeholder.jpg" data-src="/img/cart_cover.jpg" alt="越权那些事儿"/>
+								<img class="lazy" src="/img/placeholder.jpg" data-src="/img/cart_cover.jpg" alt="测试"/>
 							</a>
 						</div>
 					</li>											
